@@ -1,17 +1,4 @@
-#* ************************************************************************** *#
-#*                                                                            *#
-#*                                                                            *#
-#*   consts.py       	                                                      *#
-#*                                                                            *#
-#*   By: yhetman <yhetman@student.unit.ua>                                    *#
-#*                                                                            *#
-#*   Created: 2021/11/29 21:49:25 by yhetman                                  *#
-#*   Updated: 2021/11/29 21:49:26 by yhetman                                  *#
-#*                                                                            *#
-#* ************************************************************************** *#
-
-
-DEBUG = True
+DEBUG = False
 
 A = 1
 
@@ -23,7 +10,7 @@ m = 167
 
 Ld = 512
 
-prim_eleme = (1 << m) - 1 # ptimitive element
+prim_eleme = (1 << m) - 1 # primitive element
 
 polinominal = (1 << m) + (1 << 6) + 1 # primitive polynomial
 

@@ -11,6 +11,7 @@
 #* ************************************************************************** *#
 
 from random import randint
+from hashlib import sha256
 
 from gf import *
 from consts import *
@@ -22,19 +23,18 @@ def generate_privat(length):
     return randint(1, ((1 << (length - 1)) - 1))
 
 
-
 def generate_public(P, d):
     if DEBUG: print("[DEBUG] : main : generate_public")
     return multiply_by_elliptic_curve_order(negative_point(P), d)
 
 
-def main():
+def generate_params():
     P = elliptic_curve_base_point()
     length = n.bit_length()
-    print(P)
-    print(length)
+    # print(P)
+    # print(length)
     d = generate_privat(length)
-    print("Privat key was generated: ", d)
+    print("Private key was generated: ", d)
 
     Q = generate_public(P, d)
     print("Public key was generated: ", Q)
@@ -43,15 +43,16 @@ def main():
     print(multiply_by_elliptic_curve_order(Q,n))
     return d,P,Q
 
+
 def generate_presign(P):
     while True:
-        print('try')
+        # print('try')
         e = randint(1,2**(n.bit_length()-1))
         Fe = multiply_by_elliptic_curve_order(P, e)
         if Fe[0] != 0:
             return e, Fe[0]
 
-from hashlib import sha256
+
 def H(T):
     h = int(sha256(T.encode('utf-8')).hexdigest(), 16)
     if h == 0:
@@ -60,17 +61,14 @@ def H(T):
         return h
 
 def hash_to_galua(h):
-    # k = h.bit_length()
-    # if k < m:
-    #     h <<= (m-k)
     return h % (2 ** m)
 
 def compute_signature(r,s):
     l = Ld // 2
-    print('signature computation')
-    print(l)
-    print(r.bit_length())
-    print(s.bit_length())
+    # print('signature computation')
+    # print(l)
+    # print(r.bit_length())
+    # print(s.bit_length())
     return (s << l) + r
 
 def de_compute_signature(D):
@@ -83,7 +81,7 @@ def sign(T,P):
     h = H(T)
     h = hash_to_galua(h)
     while True:
-        print('try to sign')
+        # print('try to sign')
         e,Fe = generate_presign(P)
         r = multiplication(h,Fe)
         if r == 0:
@@ -95,7 +93,10 @@ def sign(T,P):
         D = compute_signature(r,s)
         print (D)
         print(r,s)
-        print (de_compute_signature(D))
+        print(r-n,s-n)
+        r_, s_ = de_compute_signature(D)
+        print(r_,s_)
+        print(r_-n,s_-n)
         return D
 
 def check_sign(T,D,P,Q):
@@ -103,7 +104,9 @@ def check_sign(T,D,P,Q):
     h = hash_to_galua(h)
     r,s = de_compute_signature(D)
     if r >= n or s >= n:
-        print ('Here')
+        print('HERE')
+        print(r - n)
+        print(s - n)
         return False
     sP = multiply_by_elliptic_curve_order(P,s)
     rQ = multiply_by_elliptic_curve_order(Q,r)
@@ -120,7 +123,7 @@ if __name__ == '__main__':
 
 
     # print(n.bit_length())
-    d,P,Q = main()
+    d,P,Q = generate_params()
     T = 'test'
     D = sign(T,P)
     # e,Fe = generate_presign(P)

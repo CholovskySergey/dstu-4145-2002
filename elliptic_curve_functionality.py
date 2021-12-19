@@ -1,15 +1,3 @@
-#* ************************************************************************** *#
-#*                                                                            *#
-#*                                                                            *#
-#*   elliptic_curve_functionality.py                                          *#
-#*                                                                            *#
-#*   By: yhetman <yhetman@student.unit.ua>                                    *#
-#*                                                                            *#
-#*   Created: 2021/11/29 21:49:25 by yhetman                                  *#
-#*   Updated: 2021/11/29 21:49:26 by yhetman                                  *#
-#*                                                                            *#
-#* ************************************************************************** *#
-
 from consts import *
 from gf import *
 
@@ -67,9 +55,6 @@ def equation_solution(u, w):	# solve the quadratic equation
     if tr(v) == 1: return O
     t = htr(v)
     z = multiplication(t, u)
-    print('eq solved')
-    print (z)
-    print (multiplication(z,z)^multiplication(u,z)^w)
     return (z, 2)
 
 
@@ -81,13 +66,7 @@ def random_point_generating():
         w = (power(u, 3) ^ multiplication(A, multiplication(u, u))) ^ B
         (z, k) = equation_solution(u, w)
         if k > 0:
-            print('point generated')
             x,y = u,z
-            print (z,k)
-            print(x < polinominal, y < polinominal)
-            print(multiplication(y,y)^multiplication(x,y)^power(x,3)^multiplication(A,multiplication(x,x))^B)
-            print(multiplication(y, y) ^ multiplication(x, y) ^ w)
-            print (multiplication(z, z) ^ multiplication(u, z) ^ w)
             return (u, z)
 
 
@@ -109,8 +88,9 @@ def elliptic_curve_base_point():
     while True:
         P = random_point_generating()
         R = multiply_by_elliptic_curve_order(P, n)
-        print('generated point')
-        print(R)
-        print(n - R[0], n - R[1])
+        if DEBUG:
+            print('generated point')
+            print(R)
+            print(n - R[0], n - R[1])
         if R == O:
             return P
